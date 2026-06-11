@@ -350,6 +350,153 @@ input[type="checkbox"]:focus-visible { outline: 2px solid var(--accent-2); outli
   font-size: 0.78rem;
 }
 
+/* ---------------------------------------------------------------- Landing */
+/* index.html — marketing page sharing the app's tokens and components. */
+
+.back-link {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.back-link:hover { color: var(--accent-2); }
+
+.landing-main { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+.section-title {
+  font-size: 1.35rem;
+  margin: 0 0 18px;
+  color: #f2f6fb;
+}
+
+/* Hero */
+.hero { padding: 72px 0 44px; }
+
+.hero-chips { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+
+.version-chip {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  border: 1px solid var(--accent-2);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.hero-title {
+  margin: 0 0 14px;
+  font-size: clamp(1.7rem, 4.5vw, 2.7rem);
+  line-height: 1.18;
+  color: #f2f6fb;
+  letter-spacing: -0.5px;
+}
+
+.hero-accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: Consolas, "Cascadia Code", monospace;
+}
+
+.hero-sub {
+  margin: 0 0 26px;
+  max-width: 560px;
+  color: var(--text-dim);
+  font-size: 1.02rem;
+}
+
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+.btn-lg { padding: 11px 22px; font-size: 0.95rem; border-radius: 10px; }
+a.btn { display: inline-block; }
+a.btn:hover { text-decoration: none; }
+a.btn-primary { box-shadow: 0 6px 22px var(--accent-glow); }
+
+.cta-progress {
+  margin-top: 16px;
+  max-width: 420px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+.cta-progress[hidden] { display: none; }
+.cta-progress .bar-fill { background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: 0 0 14px var(--accent-glow); }
+
+/* Stats strip */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 40px;
+  margin: 34px 0 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--border-soft);
+}
+.stat dt {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #f2f6fb;
+  font-variant-numeric: tabular-nums;
+}
+.stat dd { margin: 0; font-size: 0.8rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+
+/* Features */
+.features { padding: 30px 0 10px; }
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
+}
+
+.feature {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 18px 16px;
+}
+.feature-icon { font-size: 1.3rem; }
+.feature h3 { margin: 10px 0 6px; font-size: 0.98rem; color: #eef3f9; }
+.feature p { margin: 0; font-size: 0.87rem; color: var(--text-dim); }
+
+/* Topics */
+.topics { padding: 36px 0 10px; }
+
+.topic-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
+
+.topic-card {
+  display: block;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 17px;
+  color: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.topic-card:hover { border-color: var(--accent); text-decoration: none; transform: translateY(-2px); }
+
+.topic-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.topic-card-title { margin: 8px 0 6px; font-size: 1.02rem; color: #eef3f9; }
+.topic-card-summary { margin: 0 0 12px; font-size: 0.85rem; color: var(--text-dim); }
+
+.module-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.module-chip {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+
+/* Closing CTA */
+.closing-cta { padding: 44px 0 64px; text-align: center; }
+.closing-cta .section-title { margin-bottom: 20px; }
+
 /* ---------------------------------------------------------------- Responsive */
 @media (max-width: 680px) {
   /* the stacked header would eat too much of a phone viewport if sticky */
@@ -360,4 +507,8 @@ input[type="checkbox"]:focus-visible { outline: 2px solid var(--accent-2); outli
   .stage-mini { margin-left: 0; }
   .ex-body { padding-left: 0; }
   #app-title { font-size: 1.04rem; }
+
+  .hero { padding: 44px 0 30px; }
+  .stats { gap: 10px 26px; }
+  .back-link { flex-basis: 100%; margin-left: 0; }
 }

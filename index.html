@@ -3,68 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A guided beginner-to-expert Unreal Engine 5.7/5.8 C++ learning path with exercises, challenges and trackable progress." />
-  <title>Unreal Engine C++ Learning Path</title>
+  <meta name="description" content="A guided beginner-to-expert Unreal Engine 5.7/5.8 C++ learning path: 8 stages of modules, hands-on exercises and challenges with trackable progress." />
+  <title>Unreal Engine C++ Learning Path — from first UCLASS to shipping</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
-  <header class="app-header">
-    <div class="header-inner">
-      <div class="title-row">
+<body class="landing">
+
+  <main class="landing-main">
+
+    <!-- ============================================================ Hero -->
+    <section class="hero">
+      <div class="hero-chips">
         <span class="app-logo">UE&nbsp;C++</span>
-        <h1 id="app-title">Unreal Engine C++ Learning Path</h1>
+        <span class="version-chip" id="engine-versions">UE 5.7 / 5.8</span>
       </div>
-      <p id="app-subtitle"></p>
+      <h1 class="hero-title">Learn Unreal Engine C++,<br />from first <span class="hero-accent">UCLASS</span> to shipping.</h1>
+      <p class="hero-sub" id="hero-sub">A guided road from your first UCLASS to shipping, profiling and extending the engine.</p>
 
-      <!-- Two progress bars: total (all items) and exercises/challenges only -->
-      <div class="bars">
-        <div class="bar-block">
-          <span class="bar-name">Total progress</span>
-          <div class="bar-track">
-            <div id="total-fill" class="bar-fill" role="progressbar"
-                 aria-label="Total progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-          </div>
-          <span id="total-label" class="bar-value">0 / 0 (0%)</span>
-        </div>
-        <div class="bar-block">
-          <span class="bar-name">Exercises &amp; challenges</span>
-          <div class="bar-track">
-            <div id="ex-fill" class="bar-fill" role="progressbar"
-                 aria-label="Exercise and challenge progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-          </div>
-          <span id="ex-label" class="bar-value">0 / 0 (0%)</span>
-        </div>
+      <div class="hero-cta">
+        <a id="cta-start" class="btn btn-primary btn-lg" href="app.html">Start learning</a>
+        <a class="btn btn-ghost btn-lg" href="#topics">Browse the topics</a>
       </div>
 
-      <!-- Toolbar: progress import/export + view controls -->
-      <div class="toolbar">
-        <button id="btn-export" class="btn btn-primary" type="button" title="Download your progress as a JSON file"><span aria-hidden="true">⬇ </span>Export</button>
-        <button id="btn-import" class="btn" type="button" title="Load progress from a JSON file"><span aria-hidden="true">⬆ </span>Import</button>
-        <button id="btn-reset" class="btn btn-danger" type="button" title="Clear all saved progress"><span aria-hidden="true">↺ </span>Reset</button>
-        <span class="toolbar-spacer"></span>
-        <button id="btn-expand" class="btn btn-ghost" type="button">Expand all</button>
-        <button id="btn-collapse" class="btn btn-ghost" type="button">Collapse all</button>
-        <input id="import-file" type="file" accept="application/json,.json" hidden />
+      <!-- Shown by landing.js only when saved progress exists -->
+      <div id="cta-progress" class="cta-progress" hidden>
+        <div class="bar-track"><div id="cta-progress-fill" class="bar-fill"></div></div>
+        <span id="cta-progress-label" class="bar-value"></span>
       </div>
-    </div>
-  </header>
 
-  <main>
-    <div id="content"><!-- stages rendered here by app.js --></div>
+      <dl class="stats" aria-label="Curriculum size">
+        <div class="stat"><dt id="stat-stages">8</dt><dd>stages</dd></div>
+        <div class="stat"><dt id="stat-modules">37</dt><dd>modules</dd></div>
+        <div class="stat"><dt id="stat-exercises">64</dt><dd>exercises &amp; challenges</dd></div>
+      </dl>
+    </section>
+
+    <!-- ======================================================== Features -->
+    <section class="features" aria-labelledby="features-title">
+      <h2 id="features-title" class="section-title">What you get</h2>
+      <div class="feature-grid">
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">🗺️</span>
+          <h3>A guided road, not a link dump</h3>
+          <p>Eight stages from Beginner to Expert, each building on the last — toolchain, reflection, gameplay framework, GAS, networking, engine internals, tooling, capstone.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">🛠️</span>
+          <h3>Hands-on by design</h3>
+          <p>Every module ends in exercises and challenges with a goal, concrete steps and acceptance criteria — plus hints when you're stuck.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">📊</span>
+          <h3>Progress that sticks</h3>
+          <p>Check off studied modules and solved exercises; per-stage and overall progress bars are saved in your browser and never leave your device.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">💾</span>
+          <h3>Export &amp; import</h3>
+          <p>Back your progress up as a JSON file and move it between browsers or machines in two clicks.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">📚</span>
+          <h3>Curated, current resources</h3>
+          <p>Hand-picked, link-checked Epic and community docs targeting UE 5.7 / 5.8 — no stale 4.x tutorials.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">⚡</span>
+          <h3>Zero setup</h3>
+          <p>No account, no build step, no tracking. A single static folder that works offline, straight from disk or GitHub Pages.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========================================================== Topics -->
+    <section class="topics" id="topics" aria-labelledby="topics-title">
+      <h2 id="topics-title" class="section-title">The path, stage by stage</h2>
+      <noscript><p class="hero-sub">Enable JavaScript to see the stage overview — or jump straight into the <a href="app.html">learning path</a>.</p></noscript>
+      <div id="topic-cards" class="topic-cards"><!-- stage cards rendered by landing.js --></div>
+    </section>
+
+    <!-- ====================================================== Closing CTA -->
+    <section class="closing-cta">
+      <h2 class="section-title">Ready when you are.</h2>
+      <a class="btn btn-primary btn-lg" href="app.html">Open the learning path</a>
+    </section>
+
   </main>
 
   <footer class="app-footer">
     <p>
-      Progress is saved in your browser (localStorage) and never leaves your device.
-      Use <strong>Export</strong> to back it up or move it to another browser/machine, and <strong>Import</strong> to restore it.
-      External resource links point to Epic and community docs and may move over time.
+      Your progress is saved in your browser (localStorage) and never leaves your device.
+      External resource links point to Epic and community docs.
+      <a href="app.html">Open the app</a>.
     </p>
   </footer>
 
-  <div id="flash" class="flash" role="status" aria-live="polite"></div>
-
   <!-- Classic scripts (no modules / no fetch) so this works from file:// too. content.js MUST load first. -->
   <script src="js/content.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/landing.js"></script>
 </body>
 </html>

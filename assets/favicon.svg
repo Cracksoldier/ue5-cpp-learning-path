@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Mirrors the app palette in css/styles.css: bg panels + accent gradient -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e8fff"/>
+      <stop offset="1" stop-color="#2bd9ff"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="62" height="62" rx="14" fill="#0d141d" stroke="#1b232e" stroke-width="2"/>
+  <!-- U -->
+  <path d="M17 14 v18 a10 10 0 0 0 20 0 V14" fill="none" stroke="url(#g)" stroke-width="9" stroke-linecap="round"/>
+  <!-- ++ -->
+  <g stroke="#2bd9ff" stroke-width="4.5" stroke-linecap="round">
+    <path d="M45 41 h9 M49.5 36.5 v9"/>
+    <path d="M51 52 h9 M55.5 47.5 v9"/>
+  </g>
+</svg>

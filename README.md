@@ -10,18 +10,21 @@ A self-contained, single-page learning path that takes you from your **first `UC
 
 ```
 .
-├── index.html        # page shell: header, the two progress bars, toolbar
-├── css/styles.css    # UE dark / Epic-style theme
-├── js/content.js     # the curriculum data (8 stages, modules, exercises) — edit here to extend
-├── js/app.js         # rendering, progress tracking, persistence, import/export
-├── .nojekyll         # makes GitHub Pages serve files verbatim
+├── index.html         # landing page: features, topics, continue-where-you-left-off CTA
+├── app.html           # the app shell: header, the two progress bars, toolbar
+├── css/styles.css     # UE dark / Epic-style theme (shared by both pages)
+├── js/content.js      # the curriculum data (8 stages, modules, exercises) — edit here to extend
+├── js/app.js          # app: rendering, progress tracking, persistence, import/export
+├── js/landing.js      # landing page: stats, topic cards, saved-progress CTA (read-only)
+├── assets/favicon.svg
+├── .nojekyll          # makes GitHub Pages serve files verbatim
 └── README.md
 ```
 
 ## Running it
 
 ### Option A — open directly (no server)
-Double-click **`index.html`** (or open it via `File → Open` in your browser). It works from the `file://` protocol because it uses classic `<script>` tags and embeds its data in `content.js` — no `fetch()` and no ES modules.
+Double-click **`index.html`** for the landing page (the tracker itself lives at **`app.html`**), or open either via `File → Open` in your browser. Both work from the `file://` protocol because they use classic `<script>` tags and embed their data in `content.js` — no `fetch()` and no ES modules.
 
 ### Option B — local static server (optional)
 Identical to how GitHub Pages serves it:
