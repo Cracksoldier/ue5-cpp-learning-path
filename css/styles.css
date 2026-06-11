@@ -12,7 +12,7 @@
   --border-soft: #1b232e;
   --text: #d7dee8;
   --text-dim: #9aa6b4;
-  --text-faint: #6b7787;
+  --text-faint: #8290a2; /* keeps >=4.5:1 contrast on the panel backgrounds */
   --accent: #0e8fff;
   --accent-2: #2bd9ff;
   --accent-glow: rgba(14, 143, 255, 0.35);
@@ -161,6 +161,9 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 22px 20px 80px; }
   box-shadow: var(--shadow);
 }
 
+/* heading wrapper around the disclosure button — purely structural */
+.stage-h { margin: 0; font-size: inherit; font-weight: inherit; }
+
 .stage-header {
   width: 100%;
   display: flex;
@@ -195,7 +198,6 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 22px 20px 80px; }
 .level-intermediate { color: var(--intermediate); }
 .level-advanced { color: var(--advanced); }
 .level-expert { color: var(--expert); }
-.level-advanced-expert { color: var(--advanced); }
 
 .stage-mini { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .stage-mini-track { display: inline-block; width: 90px; height: 7px; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
@@ -347,10 +349,11 @@ input[type="checkbox"]:focus-visible { outline: 2px solid var(--accent-2); outli
   color: var(--text-faint);
   font-size: 0.78rem;
 }
-.app-footer a { color: var(--text-dim); }
 
 /* ---------------------------------------------------------------- Responsive */
 @media (max-width: 680px) {
+  /* the stacked header would eat too much of a phone viewport if sticky */
+  .app-header { position: static; }
   .bar-block { grid-template-columns: 1fr; gap: 4px; }
   .bar-value { text-align: left; }
   .stage-title { flex-basis: 100%; }

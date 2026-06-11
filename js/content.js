@@ -282,8 +282,8 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Unreal Object handling — Garbage Collection", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-object-handling-in-unreal-engine", type: "doc" },
-            { title: "TObjectPtr & object pointers", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-smart-pointer-library-in-unreal-engine", type: "doc" },
-            { title: "C++ API: UObject", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/CoreUObject/UObject/UObject", type: "doc" }
+            { title: "Smart pointers & TObjectPtr", url: "https://dev.epicgames.com/documentation/unreal-engine/smart-pointers-in-unreal-engine", type: "doc" },
+            { title: "C++ API: UObject", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/CoreUObject/UObject", type: "doc" }
           ],
           exercises: [
             {
@@ -715,7 +715,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Networking and Multiplayer overview", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-and-multiplayer-in-unreal-engine", type: "doc" },
-            { title: "Property replication", url: "https://dev.epicgames.com/documentation/unreal-engine/replicating-object-properties-in-unreal-engine", type: "doc" },
+            { title: "Property replication", url: "https://dev.epicgames.com/documentation/unreal-engine/replicate-actor-properties-in-unreal-engine", type: "doc" },
             { title: "RPCs (Remote Procedure Calls)", url: "https://dev.epicgames.com/documentation/unreal-engine/rpcs-in-unreal-engine", type: "doc" }
           ],
           exercises: [
@@ -818,7 +818,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Animation Blueprints", url: "https://dev.epicgames.com/documentation/unreal-engine/animation-blueprints-in-unreal-engine", type: "doc" },
-            { title: "C++ API: UAnimInstance", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/Animation/UAnimInstance", type: "doc" }
+            { title: "C++ API: UAnimInstance", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/UAnimInstance", type: "doc" }
           ],
           exercises: [
             {
@@ -947,7 +947,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "UMG UI Designer", url: "https://dev.epicgames.com/documentation/unreal-engine/umg-ui-designer-for-unreal-engine", type: "doc" },
-            { title: "Slate UI framework", url: "https://dev.epicgames.com/documentation/unreal-engine/slate-ui-framework-in-unreal-engine", type: "doc" },
+            { title: "Slate UI programming framework", url: "https://dev.epicgames.com/documentation/unreal-engine/slate-user-interface-programming-framework-for-unreal-engine", type: "doc" },
             { title: "benui — Unreal UI articles (community)", url: "https://benui.ca/unreal/", type: "doc" }
           ],
           exercises: [
@@ -990,7 +990,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Plugins in Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/plugins-in-unreal-engine", type: "doc" },
-            { title: "Game modules / module setup", url: "https://dev.epicgames.com/documentation/unreal-engine/game-modules-in-unreal-engine", type: "doc" }
+            { title: "Gameplay modules / module setup", url: "https://dev.epicgames.com/documentation/unreal-engine/gameplay-modules-in-unreal-engine", type: "doc" }
           ],
           exercises: [
             {
@@ -1048,7 +1048,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Asset Registry", url: "https://dev.epicgames.com/documentation/unreal-engine/asset-registry-in-unreal-engine", type: "doc" },
-            { title: "Commandlets (C++ API: UCommandlet)", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/Commandlets/UCommandlet", type: "doc" }
+            { title: "Commandlets (C++ API: UCommandlet)", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/UCommandlet", type: "doc" }
           ],
           exercises: [
             {
@@ -1120,7 +1120,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Networking overview (server authority, relevancy)", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-and-multiplayer-in-unreal-engine", type: "doc" },
-            { title: "Network optimization & push model", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-optimizations-in-unreal-engine", type: "doc" }
+            { title: "Networking overview (authority, relevancy, optimization)", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-overview-for-unreal-engine", type: "doc" }
           ],
           exercises: [
             {
@@ -1150,7 +1150,7 @@ window.CURRICULUM = {
           resources: [
             { title: "Packaging Unreal Engine Projects", url: "https://dev.epicgames.com/documentation/unreal-engine/packaging-unreal-engine-projects", type: "doc" },
             { title: "Build configurations", url: "https://dev.epicgames.com/documentation/unreal-engine/build-configurations-reference-for-unreal-engine", type: "doc" },
-            { title: "Crash reporting & debugging", url: "https://dev.epicgames.com/documentation/unreal-engine/debugging-and-optimization-in-unreal-engine", type: "doc" }
+            { title: "Testing & optimizing your content", url: "https://dev.epicgames.com/documentation/unreal-engine/testing-and-optimizing-your-content", type: "doc" }
           ],
           exercises: [
             {
@@ -1178,8 +1178,8 @@ window.CURRICULUM = {
             "Ship it."
           ],
           resources: [
-            { title: "Unreal Engine for Programmers (learning hub)", url: "https://dev.epicgames.com/community/unreal-engine/getting-started/programming", type: "doc" },
-            { title: "Sample games & feature samples", url: "https://dev.epicgames.com/documentation/unreal-engine/sample-games-in-unreal-engine", type: "repo" }
+            { title: "Epic Developer Community — getting started hub", url: "https://dev.epicgames.com/community/unreal-engine/getting-started", type: "doc" },
+            { title: "Sample game projects", url: "https://dev.epicgames.com/documentation/unreal-engine/sample-game-projects-for-unreal-engine", type: "repo" }
           ],
           exercises: [
             {

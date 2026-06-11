@@ -27,13 +27,26 @@
    * ---------------------------------------------------------------------- */
   var state = { version: 1, completed: {}, updatedAt: null };
 
+  // Accepts anything and returns a clean { id: true } map (or null if the
+  // input isn't usable). Shared by loadState and importProgressFromFile so
+  // tampered/corrupted data can't enter the state from either path.
+  function sanitizeCompleted(completed) {
+    if (!completed || typeof completed !== "object" || Array.isArray(completed)) return null;
+    var clean = {};
+    Object.keys(completed).forEach(function (k) {
+      if (completed[k] === true) clean[k] = true;
+    });
+    return clean;
+  }
+
   function loadState() {
     try {
       var raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         var parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === "object" && parsed.completed) {
-          state.completed = parsed.completed || {};
+        var clean = parsed && sanitizeCompleted(parsed.completed);
+        if (clean) {
+          state.completed = clean;
           state.version = parsed.version || 1;
           state.updatedAt = parsed.updatedAt || null;
         }
@@ -45,12 +58,18 @@
     }
   }
 
+  var storageWarned = false;
+
   function saveState() {
     state.updatedAt = new Date().toISOString();
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) {
       console.warn("Could not save progress (storage unavailable):", e);
+      if (!storageWarned) {
+        storageWarned = true;
+        flash("Progress can't be saved in this browser — use Export to back it up.", "err");
+      }
     }
   }
 
@@ -96,6 +115,18 @@
     return total === 0 ? 0 : Math.round((done / total) * 100);
   }
 
+  // Every trackable item id in the current curriculum (study + exercises).
+  function collectValidIds() {
+    var ids = {};
+    DATA.stages.forEach(function (st) {
+      st.modules.forEach(function (mod) {
+        ids[mod.id + ":study"] = true;
+        (mod.exercises || []).forEach(function (ex) { ids[ex.id] = true; });
+      });
+    });
+    return ids;
+  }
+
   /* -------------------------------------------------------------------------
    * Small DOM helpers
    * ---------------------------------------------------------------------- */
@@ -105,7 +136,6 @@
       Object.keys(attrs).forEach(function (k) {
         if (k === "class") node.className = attrs[k];
         else if (k === "text") node.textContent = attrs[k];
-        else if (k === "html") node.innerHTML = attrs[k];
         else if (k === "for") node.htmlFor = attrs[k]; // <label for> is the htmlFor DOM property
         else if (k.indexOf("data-") === 0 || k === "role" || k.indexOf("aria-") === 0)
           node.setAttribute(k, attrs[k]);
@@ -127,9 +157,24 @@
   var contentRoot;
 
   function render() {
+    // Re-renders (import/reset) keep the user's expanded stages; the first
+    // render falls back to the default of opening stage 0 only.
+    var openIds = null;
+    if (contentRoot.children.length > 0) {
+      openIds = {};
+      contentRoot.querySelectorAll(".stage.open").forEach(function (s) {
+        openIds[s.getAttribute("data-stage-id")] = true;
+      });
+    }
     contentRoot.innerHTML = "";
     DATA.stages.forEach(function (stage, idx) {
-      contentRoot.appendChild(renderStage(stage, idx));
+      var node = renderStage(stage, idx);
+      if (openIds) {
+        var open = openIds[stage.id] === true;
+        node.classList.toggle("open", open);
+        node.querySelector(".stage-header").setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      contentRoot.appendChild(node);
     });
     updateHeaderBars();
   }
@@ -142,13 +187,14 @@
     var miniFill = el("span", {
       class: "stage-mini-fill",
       role: "progressbar",
+      "aria-label": stage.title + " progress",
       "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": String(stagePct)
     });
     miniFill.style.width = stagePct + "%";
     var miniLabel = el("span", { class: "stage-mini-label", text: stagePct + "%" });
     var mini = el("span", { class: "stage-mini" }, [el("span", { class: "stage-mini-track" }, [miniFill]), miniLabel]);
 
-    var caret = el("span", { class: "caret", text: "▸" });
+    var caret = el("span", { class: "caret", text: "▸", "aria-hidden": "true" });
     var header = el("button", {
       class: "stage-header",
       type: "button",
@@ -168,7 +214,11 @@
       body.appendChild(renderModule(mod));
     });
 
-    var wrapper = el("section", { class: "stage" + (idx === 0 ? " open" : "") }, [header, body]);
+    // <h2><button></h2> is the standard accessible disclosure/accordion shape.
+    var wrapper = el("section", {
+      class: "stage" + (idx === 0 ? " open" : ""),
+      "data-stage-id": stage.id
+    }, [el("h2", { class: "stage-h" }, [header]), body]);
 
     header.addEventListener("click", function () {
       var open = wrapper.classList.toggle("open");
@@ -203,7 +253,7 @@
       (mod.resources || []).map(function (r) {
         var icon = RESOURCE_ICON[r.type] || "🔗";
         return el("li", {}, [
-          el("span", { class: "res-icon", text: icon }),
+          el("span", { class: "res-icon", text: icon, "aria-hidden": "true" }),
           el("a", { href: r.url, target: "_blank", rel: "noopener noreferrer", text: r.title })
         ]);
       }));
@@ -214,9 +264,7 @@
     var studyLabel = el("label", { class: "study-label", "for": studyId, text: "Mark module as studied" });
 
     var moduleNode = el("article", { class: "module" }, [
-      el("div", { class: "module-head" }, [
-        el("h3", { class: "module-title", text: mod.title })
-      ]),
+      el("h3", { class: "module-title", text: mod.title }),
       el("h4", { class: "section-label", text: "Objectives" }),
       objectives,
       el("h4", { class: "section-label", text: "Learning resources" }),
@@ -329,20 +377,21 @@
     reader.onload = function () {
       try {
         var parsed = JSON.parse(reader.result);
-        var completed = parsed && parsed.completed;
-        if (!completed || typeof completed !== "object" || Array.isArray(completed)) {
+        var clean = parsed && sanitizeCompleted(parsed.completed);
+        if (!clean) {
           throw new Error("Missing or invalid 'completed' map.");
         }
-        // Keep only truthy boolean entries — defensive against tampered files.
-        var clean = {};
-        Object.keys(completed).forEach(function (k) {
-          if (completed[k] === true) clean[k] = true;
-        });
         state.completed = clean;
         state.version = parsed.version || state.version || 1;
         saveState();
         render();
-        flash("Progress imported (" + Object.keys(clean).length + " items).", "ok");
+        // Unknown ids are kept (they round-trip through export) but only
+        // ids present in the current curriculum show up in the UI/bars.
+        var validIds = collectValidIds();
+        var keys = Object.keys(clean);
+        var matched = keys.filter(function (k) { return validIds[k] === true; }).length;
+        var unknown = keys.length - matched;
+        flash("Progress imported (" + matched + " items" + (unknown ? ", " + unknown + " unknown ids ignored" : "") + ").", unknown ? "err" : "ok");
       } catch (e) {
         flash("Import failed: " + e.message, "err");
       }
