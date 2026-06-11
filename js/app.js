@@ -184,15 +184,16 @@
     var stagePct = pct(prog.doneAll, prog.totalAll);
 
     var badge = el("span", { class: "level-badge level-" + slug(stage.level), text: stage.level });
-    var miniFill = el("span", {
-      class: "stage-mini-fill",
-      role: "progressbar",
-      "aria-label": stage.title + " progress",
-      "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": String(stagePct)
-    });
+    // The visible "42%" label is the accessible text (read once as part of the
+    // disclosure button's name); the bar itself is decorative — a progressbar
+    // role inside the button would make screen readers announce it twice.
+    var miniFill = el("span", { class: "stage-mini-fill" });
     miniFill.style.width = stagePct + "%";
     var miniLabel = el("span", { class: "stage-mini-label", text: stagePct + "%" });
-    var mini = el("span", { class: "stage-mini" }, [el("span", { class: "stage-mini-track" }, [miniFill]), miniLabel]);
+    var mini = el("span", { class: "stage-mini" }, [
+      el("span", { class: "stage-mini-track", "aria-hidden": "true" }, [miniFill]),
+      miniLabel
+    ]);
 
     var caret = el("span", { class: "caret", text: "▸", "aria-hidden": "true" });
     var header = el("button", {
@@ -230,7 +231,6 @@
       var p = computeProgress(stage);
       var pp = pct(p.doneAll, p.totalAll);
       miniFill.style.width = pp + "%";
-      miniFill.setAttribute("aria-valuenow", String(pp));
       miniLabel.textContent = pp + "%";
     };
     return wrapper;
@@ -381,6 +381,13 @@
         if (!clean) {
           throw new Error("Missing or invalid 'completed' map.");
         }
+        // Import replaces (not merges) — confirm like Reset does, but only
+        // after validation so a broken file still fails with a clear error.
+        var current = Object.keys(state.completed).length;
+        if (current > 0 && !window.confirm("Importing replaces your current progress (" + current + " completed items). Continue? Export first if you want a backup.")) {
+          flash("Import cancelled — progress unchanged.", "ok");
+          return;
+        }
         state.completed = clean;
         state.version = parsed.version || state.version || 1;
         saveState();
@@ -391,7 +398,7 @@
         var keys = Object.keys(clean);
         var matched = keys.filter(function (k) { return validIds[k] === true; }).length;
         var unknown = keys.length - matched;
-        flash("Progress imported (" + matched + " items" + (unknown ? ", " + unknown + " unknown ids ignored" : "") + ").", unknown ? "err" : "ok");
+        flash("Progress imported (" + matched + " items" + (unknown ? ", " + unknown + " unknown ids ignored" : "") + ").", unknown ? "warn" : "ok");
       } catch (e) {
         flash("Import failed: " + e.message, "err");
       }
@@ -453,7 +460,8 @@
       return;
     }
 
-    // Fill the header title/subtitle from data.
+    // Fill the tab title and header title/subtitle from data.
+    document.title = DATA.title + " — UE " + DATA.engineVersions;
     var titleEl = document.getElementById("app-title");
     var subEl = document.getElementById("app-subtitle");
     if (titleEl) titleEl.textContent = DATA.title + " — UE " + DATA.engineVersions;
@@ -479,6 +487,14 @@
 
     document.getElementById("btn-expand").addEventListener("click", function () { expandAll(true); });
     document.getElementById("btn-collapse").addEventListener("click", function () { expandAll(false); });
+
+    // Another tab saved progress: adopt it instead of clobbering it on our
+    // next save. (The storage event only fires in OTHER tabs, never our own.)
+    window.addEventListener("storage", function (e) {
+      if (e.key !== STORAGE_KEY) return;
+      loadState();
+      render();
+    });
   }
 
   if (document.readyState === "loading") {

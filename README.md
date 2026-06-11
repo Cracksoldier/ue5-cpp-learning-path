@@ -54,7 +54,7 @@ Each module has one **“Mark module as studied”** checkbox, plus one checkbox
 Progress is saved to `localStorage` under the key `ue5-cpp-progress-v1`, so it persists across reloads on the same browser. To back up or transfer it:
 
 - **Export** downloads a `ue5-cpp-progress-YYYYMMDD.json` file.
-- **Import** loads such a file and replaces your current progress (it validates the file and reports errors instead of crashing).
+- **Import** loads such a file and replaces your current progress (it validates the file, asks for confirmation if you already have progress, and reports errors instead of crashing).
 - **Reset** clears all progress (with a confirmation prompt).
 
 > Note: opening from `file://` and serving from `http://` are treated as **different origins** by the browser, so `localStorage` is not shared between them — use Export/Import to move progress across.

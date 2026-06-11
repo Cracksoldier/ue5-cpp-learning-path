@@ -339,6 +339,7 @@ input[type="checkbox"]:focus-visible { outline: 2px solid var(--accent-2); outli
 }
 .flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .flash.ok { border-color: var(--ok); }
+.flash.warn { border-color: var(--warn); }
 .flash.err { border-color: var(--err); color: #ffd2d2; }
 
 /* Footer */
