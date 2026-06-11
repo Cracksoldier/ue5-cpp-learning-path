@@ -237,7 +237,7 @@ window.CURRICULUM = {
             "Understand EditAnywhere vs. VisibleAnywhere and the Blueprint read/write specifiers."
           ],
           resources: [
-            { title: "UPROPERTY specifiers reference", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-uproperty-specifiers", type: "doc" },
+            { title: "UPROPERTY specifiers reference", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-uproperties", type: "doc" },
             { title: "UFUNCTION specifiers reference", url: "https://dev.epicgames.com/documentation/unreal-engine/ufunctions-in-unreal-engine", type: "doc" },
             { title: "Tom Looman — Unreal Engine C++ Complete Guide", url: "https://www.tomlooman.com/unreal-engine-cpp-guide/", type: "doc" }
           ],
@@ -359,6 +359,53 @@ window.CURRICULUM = {
               hints: ["Verbosity is filtered by the category's compiled-in and runtime level — try the 'log <Category> verbose' console command."]
             }
           ]
+        },
+        {
+          id: "s1-m5",
+          title: "Core math & transforms",
+          objectives: [
+            "Use FVector, FRotator, FQuat and FTransform fluently.",
+            "Reason about world vs. local space and how parent/child transforms compose.",
+            "Apply dot and cross products to everyday gameplay questions: facing, cones, left-or-right."
+          ],
+          resources: [
+            { title: "Transforming Actors (locations, rotations, spaces)", url: "https://dev.epicgames.com/documentation/unreal-engine/transforming-actors-in-unreal-engine", type: "doc" },
+            { title: "C++ API: TVector (the type behind FVector)", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Core/TVector", type: "doc" },
+            { title: "C++ API: FMath (math utilities)", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Core/FMath", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s1-m5-e1",
+              title: "Look-at and facing checks",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Answer 'can this NPC see the player?' with raw vector math — no AI framework involved.",
+              steps: [
+                "Place two actors and compute the normalized direction from 'NPC' to player each frame.",
+                "Dot it against the NPC's GetActorForwardVector() and compare with the cosine of a half-angle threshold.",
+                "Log visible/not-visible and verify in PIE by walking a circle around the NPC."
+              ],
+              acceptance: [
+                "The check flips at the expected angle (a 90° cone flips 45° to either side).",
+                "You can explain why you compare against cos(threshold) instead of the angle itself."
+              ],
+              hints: ["The dot product of two unit vectors *is* the cosine of the angle between them — compare against FMath::Cos(FMath::DegreesToRadians(HalfAngle))."]
+            },
+            {
+              id: "s1-m5-e2",
+              title: "Challenge: spaces and parents",
+              kind: "challenge",
+              difficulty: "medium",
+              goal: "Internalize how relative transforms compose into world transforms.",
+              steps: [
+                "Attach a child actor or component to a parent with a non-trivial relative location AND rotation.",
+                "Predict the child's world location on paper from the parent transform and the relative values.",
+                "Verify with DrawDebugCoordinateSystem (or logging GetActorTransform()), rotate the parent 90°, and predict again."
+              ],
+              acceptance: ["Your paper prediction matches the engine's world transform (within rounding) before and after rotating the parent."],
+              hints: ["Composition order trips everyone: in UE notation ChildWorld = ChildRelative * ParentWorld — rotation of the parent moves the child."]
+            }
+          ]
         }
       ]
     },
@@ -444,6 +491,37 @@ window.CURRICULUM = {
               ],
               acceptance: ["The player controller possesses your pawn and the camera follows it."],
               hints: ["AutoPossessPlayer = EAutoReceiveInput::Player0 is a quick way to test a single pawn."]
+            },
+            {
+              id: "s2-m2-e2",
+              title: "Tune the CharacterMovementComponent",
+              kind: "exercise",
+              difficulty: "easy",
+              goal: "Learn where grounded movement behavior actually lives.",
+              steps: [
+                "Create an ACharacter subclass and, in the constructor, adjust GetCharacterMovement(): MaxWalkSpeed, JumpZVelocity, AirControl and crouched half-height.",
+                "Enable crouching (NavAgentProps.bCanCrouch) and wire Crouch()/UnCrouch() to a key.",
+                "Compare how the same level feels at two very different MaxWalkSpeed values."
+              ],
+              acceptance: ["Walk speed, jump and crouch all reflect your C++ values without touching Blueprints."],
+              hints: ["Almost every movement question ('why does my character slide?') is answered by a UCharacterMovementComponent property — skim its header once."]
+            },
+            {
+              id: "s2-m2-e3",
+              title: "Challenge: sprint with stamina",
+              kind: "challenge",
+              difficulty: "medium",
+              goal: "Combine input, movement tuning and per-frame state into one small system.",
+              steps: [
+                "Bind a Sprint input that raises MaxWalkSpeed while held.",
+                "Drain a Stamina float while sprinting and regenerate it while not; clamp at 0..Max.",
+                "Force sprint off at zero stamina and block re-sprint until a threshold is recovered."
+              ],
+              acceptance: [
+                "Sprinting drains stamina, exhaustion cancels the sprint, and recovery gates re-sprinting.",
+                "Speed changes go through the CharacterMovementComponent, not by moving the actor manually."
+              ],
+              hints: ["Store the walk/sprint speeds as UPROPERTY(EditAnywhere) so designers can tune them later."]
             }
           ]
         },
@@ -516,6 +594,118 @@ window.CURRICULUM = {
               ],
               acceptance: ["You can justify when a timer is preferable to Tick."],
               hints: ["A 2 Hz timer wakes up twice a second; a Tick implementation runs every frame and discards most of them."]
+            }
+          ]
+        },
+        {
+          id: "s2-m5",
+          title: "Collision, traces & physics",
+          objectives: [
+            "Run line traces and sweeps from C++ and read FHitResult correctly.",
+            "Understand hit vs. overlap events and how channels, presets and responses interact.",
+            "Apply forces and impulses to simulated bodies and reason about mass."
+          ],
+          resources: [
+            { title: "Collision overview", url: "https://dev.epicgames.com/documentation/unreal-engine/collision-in-unreal-engine", type: "doc" },
+            { title: "Traces with raycasts", url: "https://dev.epicgames.com/documentation/unreal-engine/traces-with-raycasts-in-unreal-engine", type: "doc" },
+            { title: "Physics in Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/physics-in-unreal-engine", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s2-m5-e1",
+              title: "A hitscan interaction trace",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Own the single most-used gameplay query in the engine.",
+              steps: [
+                "Add a custom trace channel (Project Settings > Collision) and set sensible default responses.",
+                "Each frame (or on a key), LineTraceSingleByChannel from the camera forward and draw the line with DrawDebugLine.",
+                "On hit, log the actor, component and bone name from the FHitResult and mark the impact point with DrawDebugSphere."
+              ],
+              acceptance: [
+                "The trace hits only what your channel says it should — you can make an actor invisible to it via its collision response.",
+                "You can explain the difference between bBlockingHit and an overlap."
+              ],
+              hints: ["Pass FCollisionQueryParams with AddIgnoredActor(this) or you'll mostly hit yourself."]
+            },
+            {
+              id: "s2-m5-e2",
+              title: "Overlap-driven trigger zone",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Use overlap events idiomatically — the delegate signature is a rite of passage.",
+              steps: [
+                "Add a UBoxComponent set to 'Overlap' for pawns and bind OnComponentBeginOverlap/OnComponentEndOverlap with AddDynamic.",
+                "Match the exact UFUNCTION signature (6 parameters for begin, 4 for end) — let the compiler teach you.",
+                "Track who is inside the zone in a TSet and log enter/leave; ignore the owning actor."
+              ],
+              acceptance: ["Enter and leave both fire exactly once per pawn and the inside-set never drifts out of sync."],
+              hints: ["Both components must have 'Generate Overlap Events' enabled and their responses must agree — one Block side downgrades the pair to a hit, not an overlap."]
+            },
+            {
+              id: "s2-m5-e3",
+              title: "Challenge: physics knockback",
+              kind: "challenge",
+              difficulty: "hard",
+              goal: "Push simulated bodies around predictably.",
+              steps: [
+                "Place several StaticMeshActors with 'Simulate Physics' on and very different masses.",
+                "On your interaction trace hit, AddImpulseAtLocation along the trace direction to the hit component.",
+                "Compare the reaction with and without bVelChange (mass-independent impulse) and write a short comment on when each is right."
+              ],
+              acceptance: [
+                "Light and heavy objects react differently with a plain impulse and identically with bVelChange.",
+                "You can explain why applying the impulse at the hit location adds spin."
+              ],
+              hints: ["AddImpulse affects linear velocity; applying it off-center introduces torque — that's the spin you're seeing."]
+            }
+          ]
+        },
+        {
+          id: "s2-m6",
+          title: "The debugging toolbox",
+          objectives: [
+            "Choose between check, ensure and verify and know what each does in Shipping builds.",
+            "Drive the engine with console variables and add your own from C++.",
+            "Inspect live AI/gameplay state with the Gameplay Debugger and record it with the Visual Logger."
+          ],
+          resources: [
+            { title: "Asserts (check / ensure / verify)", url: "https://dev.epicgames.com/documentation/unreal-engine/asserts-in-unreal-engine", type: "doc" },
+            { title: "Console variables in C++", url: "https://dev.epicgames.com/documentation/unreal-engine/console-variables-cplusplus-in-unreal-engine", type: "doc" },
+            { title: "Visual Logger", url: "https://dev.epicgames.com/documentation/unreal-engine/visual-logger-in-unreal-engine", type: "doc" },
+            { title: "Gameplay Debugger", url: "https://dev.epicgames.com/documentation/unreal-engine/using-the-gameplay-debugger-in-unreal-engine", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s2-m6-e1",
+              title: "Instrument a bug",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Find a logic bug with engine tooling instead of a debugger.",
+              steps: [
+                "Seed a deliberate bug (e.g. your trigger zone's inside-set leaks an entry on leave).",
+                "Guard the assumption with ensureMsgf so the first violation logs a callstack without crashing.",
+                "Record a session with the Visual Logger (UE_VLOG the set size + positions each event) and find the exact moment it drifts."
+              ],
+              acceptance: [
+                "The ensure fires once at the violation with a readable message and you can point at the broken event in the Visual Logger timeline.",
+                "You can explain why this stayed check-free: ensure for 'should not happen', check for 'cannot continue'."
+              ],
+              hints: ["ensure fires only once per site by default — exactly what you want for a per-frame assumption."]
+            },
+            {
+              id: "s2-m6-e2",
+              title: "Your own CVar",
+              kind: "exercise",
+              difficulty: "easy",
+              goal: "Make your debug drawing toggleable like the engine's own.",
+              steps: [
+                "Register a TAutoConsoleVariable<int32> (e.g. 'MyGame.Debug.Traces', default 0).",
+                "Gate the DrawDebug calls from your trace exercise behind GetValueOnGameThread().",
+                "Toggle it live from the ` console and from the command line with -ExecCmds."
+              ],
+              acceptance: ["Debug drawing switches on and off at runtime with no recompile."],
+              hints: ["Console variables are found by prefix in the console — pick a consistent 'MyGame.' namespace now and keep it."]
             }
           ]
         }
@@ -716,7 +906,7 @@ window.CURRICULUM = {
           resources: [
             { title: "Networking and Multiplayer overview", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-and-multiplayer-in-unreal-engine", type: "doc" },
             { title: "Property replication", url: "https://dev.epicgames.com/documentation/unreal-engine/replicate-actor-properties-in-unreal-engine", type: "doc" },
-            { title: "RPCs (Remote Procedure Calls)", url: "https://dev.epicgames.com/documentation/unreal-engine/rpcs-in-unreal-engine", type: "doc" }
+            { title: "RPCs (Remote Procedure Calls)", url: "https://dev.epicgames.com/documentation/unreal-engine/remote-procedure-calls-in-unreal-engine", type: "doc" }
           ],
           exercises: [
             {
@@ -759,7 +949,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Programming Subsystems", url: "https://dev.epicgames.com/documentation/unreal-engine/programming-subsystems-in-unreal-engine", type: "doc" },
-            { title: "C++ API: USubsystem", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/Subsystems/USubsystem", type: "doc" }
+            { title: "C++ API: USubsystem", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/USubsystem", type: "doc" }
           ],
           exercises: [
             {
@@ -775,6 +965,20 @@ window.CURRICULUM = {
               ],
               acceptance: ["State stored in the subsystem persists across a map travel."],
               hints: ["Choose World subsystem for per-level state, GameInstance for cross-level state."]
+            },
+            {
+              id: "s4-m3-e2",
+              title: "A WorldSubsystem score tracker",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Feel the lifetime difference between World and GameInstance subsystems.",
+              steps: [
+                "Create a UWorldSubsystem that tracks a per-level score and logs it in Deinitialize.",
+                "Bump the score from gameplay (e.g. your pickup actor) via GetWorld()->GetSubsystem<...>().",
+                "Travel to another map and observe: the world subsystem resets, your GameInstance subsystem from the previous exercise doesn't."
+              ],
+              acceptance: ["You can state precisely when each subsystem type is created and torn down."],
+              hints: ["Override ShouldCreateSubsystem to keep editor preview worlds from spawning one too."]
             }
           ]
         },
@@ -805,6 +1009,34 @@ window.CURRICULUM = {
               ],
               acceptance: ["The AI patrols, detects the player, chases, and your C++ task drives patrol selection."],
               hints: ["Use AIPerceptionComponent with Sight sense; write back to the Blackboard from the perception callback."]
+            },
+            {
+              id: "s4-m4-e2",
+              title: "A custom BTTask in C++",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Stop treating Behavior Tree nodes as Blueprint-only.",
+              steps: [
+                "Subclass UBTTaskNode and override ExecuteTask (return InProgress for latent work, Succeeded/Failed otherwise).",
+                "Read and write Blackboard keys through the OwnerComp's BlackboardComponent.",
+                "Give the node a sensible description via GetStaticDescription so it reads well in the tree editor."
+              ],
+              acceptance: ["Your node appears in the BT editor, runs, and its result visibly steers the tree."],
+              hints: ["For latent tasks, store state on the node *instance memory* (GetNodeMemory), not on the node object — one node object serves many agents."]
+            },
+            {
+              id: "s4-m4-e3",
+              title: "An EQS query for flee points",
+              kind: "exercise",
+              difficulty: "hard",
+              goal: "Use EQS for spatial reasoning instead of hand-rolled loops.",
+              steps: [
+                "Create an EQS query: a grid or donut generator around the querier.",
+                "Score items with Distance (to threat, inverse) and Trace (line of sight to threat) tests.",
+                "Run it from the Behavior Tree (Run EQS Query node) into a Blackboard vector key and have the AI flee there."
+              ],
+              acceptance: ["The AI picks points away from and out of sight of the threat; you can visualize scores with the EQS testing pawn."],
+              hints: ["Enable the EQS testing pawn in editor preferences (experimental) to debug scoring in the level."]
             }
           ]
         },
@@ -818,7 +1050,8 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Animation Blueprints", url: "https://dev.epicgames.com/documentation/unreal-engine/animation-blueprints-in-unreal-engine", type: "doc" },
-            { title: "C++ API: UAnimInstance", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/UAnimInstance", type: "doc" }
+            { title: "C++ API: UAnimInstance", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/UAnimInstance", type: "doc" },
+            { title: "Animation Notifies", url: "https://dev.epicgames.com/documentation/unreal-engine/animation-notifies-in-unreal-engine", type: "doc" }
           ],
           exercises: [
             {
@@ -834,6 +1067,131 @@ window.CURRICULUM = {
               ],
               acceptance: ["Locomotion animation responds to values your C++ AnimInstance computes."],
               hints: ["Cache the owning pawn once in NativeInitializeAnimation; read velocity each update."]
+            },
+            {
+              id: "s4-m5-e2",
+              title: "Anim notifies into gameplay",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Let animation timing drive gameplay events instead of guessing with timers.",
+              steps: [
+                "Subclass UAnimNotify in C++ and override Notify (it receives the mesh and the sequence).",
+                "Place your notify on the footstep frames of a walk/run animation.",
+                "In Notify, route into gameplay: trace down from the foot and log/play the surface that was hit."
+              ],
+              acceptance: ["Footstep events fire exactly on the animation frames where you placed the notify, in sync at any play rate."],
+              hints: ["The notify object is shared between all meshes playing the animation — keep it stateless and act on the MeshComp parameter."]
+            }
+          ]
+        },
+        {
+          id: "s4-m6",
+          title: "Asset references & async loading",
+          objectives: [
+            "Know what a hard reference costs and when a soft reference is the right call.",
+            "Load assets on demand with TSoftObjectPtr/TSoftClassPtr and FStreamableManager.",
+            "Understand what the Asset Manager and primary assets add on top."
+          ],
+          resources: [
+            { title: "Referencing assets (hard vs. soft)", url: "https://dev.epicgames.com/documentation/unreal-engine/referencing-assets-in-unreal-engine", type: "doc" },
+            { title: "Asynchronous asset loading", url: "https://dev.epicgames.com/documentation/unreal-engine/asynchronous-asset-loading-in-unreal-engine", type: "doc" },
+            { title: "Asset Management (Asset Manager, primary assets)", url: "https://dev.epicgames.com/documentation/unreal-engine/asset-management-in-unreal-engine", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s4-m6-e1",
+              title: "Soft-load an item's mesh",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Stop paying load-time and memory for assets you might never show.",
+              steps: [
+                "Change your DataTable item row's mesh from UStaticMesh* to TSoftObjectPtr<UStaticMesh>.",
+                "Request it via FStreamableManager::RequestAsyncLoad and apply the mesh in the completion delegate.",
+                "Log load begin/end and confirm the frame doesn't hitch even for a large mesh."
+              ],
+              acceptance: [
+                "The mesh appears shortly after the request with no game-thread hitch.",
+                "You can articulate what would have happened with a hard UStaticMesh* reference instead."
+              ],
+              hints: ["Get the streamable manager from UAssetManager::GetStreamableManager() — and keep the returned handle alive or the load can be cancelled."]
+            },
+            {
+              id: "s4-m6-e2",
+              title: "Challenge: audit your reference graph",
+              kind: "challenge",
+              difficulty: "hard",
+              goal: "See the memory cost of careless references with the engine's own tools.",
+              steps: [
+                "Pick a Blueprint or data asset and open it in the Reference Viewer; follow what referencing it pulls in.",
+                "Open Size Map on the same asset and find the biggest transitive dependency.",
+                "Break one accidental hard chain (convert to a soft reference or restructure) and confirm the Size Map shrinks."
+              ],
+              acceptance: ["Before/after Size Map screenshots (or numbers) showing the dependency you removed."],
+              hints: ["Common offenders: a character BP hard-referencing every skin, or a DataTable row pointing at full meshes instead of soft refs."]
+            }
+          ]
+        },
+        {
+          id: "s4-m7",
+          title: "Saving & serialization",
+          objectives: [
+            "Persist progress with USaveGame and the SaveGame UPROPERTY flag.",
+            "Use the synchronous and async SaveGameToSlot/LoadGameFromSlot APIs appropriately.",
+            "Know what FArchive is underneath and plan for save versioning."
+          ],
+          resources: [
+            { title: "Saving and loading your game", url: "https://dev.epicgames.com/documentation/unreal-engine/saving-and-loading-your-game-in-unreal-engine", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s4-m7-e1",
+              title: "Save/load the inventory",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Round-trip real gameplay state to disk, then stop blocking on it.",
+              steps: [
+                "Create a USaveGame subclass holding your Stage 1 inventory (mark the fields SaveGame).",
+                "Save on demand with UGameplayStatics::SaveGameToSlot and restore it on startup from your GameInstance subsystem.",
+                "Switch to AsyncSaveGameToSlot/AsyncLoadGameFromSlot with completion delegates and add a save-version int you check on load."
+              ],
+              acceptance: [
+                "Quitting and restarting PIE restores the exact inventory.",
+                "Loading an old/missing save degrades gracefully instead of crashing — the version field is checked."
+              ],
+              hints: ["A saved game is just serialized UPROPERTYs — renaming a property orphans its old data, which is why versioning matters from day one."]
+            }
+          ]
+        },
+        {
+          id: "s4-m8",
+          title: "Levels, streaming & travel",
+          objectives: [
+            "Choose between OpenLevel, seamless travel and streaming sublevels.",
+            "Stream a level in and out from C++ and react to its load state.",
+            "Know what World Partition automates and what actor lifetime means across travel."
+          ],
+          resources: [
+            { title: "Level streaming", url: "https://dev.epicgames.com/documentation/unreal-engine/level-streaming-in-unreal-engine", type: "doc" },
+            { title: "World Partition", url: "https://dev.epicgames.com/documentation/unreal-engine/world-partition-in-unreal-engine", type: "doc" },
+            { title: "Travelling in multiplayer", url: "https://dev.epicgames.com/documentation/unreal-engine/travelling-in-multiplayer-in-unreal-engine", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s4-m8-e1",
+              title: "Challenge: persist across travel",
+              kind: "challenge",
+              difficulty: "hard",
+              goal: "Learn the hard boundary between what travel destroys and what survives.",
+              steps: [
+                "Put state in three places: on an Actor, in a UWorldSubsystem, and in your GameInstance subsystem.",
+                "Travel between two maps (OpenLevel, then ServerTravel in a 2-player PIE session) and log what survived each time.",
+                "Write a short summary: which travel type tore down what, and where must cross-map state live."
+              ],
+              acceptance: [
+                "A table (comment or note) mapping each storage location to its fate under OpenLevel vs. ServerTravel.",
+                "Cross-map state ends up in the GameInstance (or PlayerState with seamless travel) — and you can say why."
+              ],
+              hints: ["Seamless travel can carry specific actors over via AGameModeBase::GetSeamlessTravelActorList — that's the exception that proves the rule."]
             }
           ]
         }
@@ -889,7 +1247,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Tasks System / async programming", url: "https://dev.epicgames.com/documentation/unreal-engine/tasks-systems-in-unreal-engine", type: "doc" },
-            { title: "Multi-threading & FRunnable (C++ API: FRunnable)", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Core/HAL/FRunnable", type: "doc" }
+            { title: "Multi-threading & FRunnable (C++ API: FRunnable)", url: "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Core/FRunnable", type: "doc" }
           ],
           exercises: [
             {
@@ -905,6 +1263,20 @@ window.CURRICULUM = {
               ],
               acceptance: ["The hitch disappears and the result is applied safely on the game thread."],
               hints: ["Don't touch UObjects/Actors from a worker thread — compute plain data, then apply on the game thread."]
+            },
+            {
+              id: "s5-m2-e2",
+              title: "A UE::Tasks pipeline",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Use the modern Tasks System instead of raw threads for dependent work.",
+              steps: [
+                "Rewrite the previous exercise with UE::Tasks::Launch returning a TTask.",
+                "Chain a second task that consumes the first one's result via prerequisites (Launch with the first task as a prerequisite, or Then-style continuation).",
+                "Busy-wait nowhere: collect the final result on the game thread without blocking it."
+              ],
+              acceptance: ["Two dependent pieces of work run off-thread in order, and the game thread never stalls waiting."],
+              hints: ["Prefer UE::Tasks over FRunnable for almost everything — FRunnable is for long-lived dedicated threads (e.g. a socket listener), tasks are for units of work."]
             }
           ]
         },
@@ -946,9 +1318,10 @@ window.CURRICULUM = {
             "Construct a simple Slate widget in C++."
           ],
           resources: [
-            { title: "UMG UI Designer", url: "https://dev.epicgames.com/documentation/unreal-engine/umg-ui-designer-for-unreal-engine", type: "doc" },
+            { title: "UMG UI Designer", url: "https://dev.epicgames.com/documentation/unreal-engine/creating-user-interfaces-with-umg-and-slate-in-unreal-engine", type: "doc" },
             { title: "Slate UI programming framework", url: "https://dev.epicgames.com/documentation/unreal-engine/slate-user-interface-programming-framework-for-unreal-engine", type: "doc" },
-            { title: "benui — Unreal UI articles (community)", url: "https://benui.ca/unreal/", type: "doc" }
+            { title: "benui — Unreal UI articles (community)", url: "https://benui.ca/unreal/", type: "doc" },
+            { title: "CommonUI plugin", url: "https://dev.epicgames.com/documentation/unreal-engine/common-ui-plugin-for-advanced-user-interfaces-in-unreal-engine", type: "doc" }
           ],
           exercises: [
             {
@@ -964,6 +1337,20 @@ window.CURRICULUM = {
               ],
               acceptance: ["The on-screen bar tracks health changes via the delegate (no Tick polling)."],
               hints: ["UPROPERTY(meta=(BindWidget)) links a C++ pointer to a widget of the same name in the WBP."]
+            },
+            {
+              id: "s5-m4-e2",
+              title: "CommonUI activatable screens",
+              kind: "exercise",
+              difficulty: "hard",
+              goal: "Structure menus the way shipping 5.x games do.",
+              steps: [
+                "Enable the CommonUI plugin and set the CommonUI input settings (input action data, default navigation).",
+                "Build a UCommonActivatableWidget-based pause menu pushed onto a UCommonActivatableWidgetStack.",
+                "Verify input routing: gameplay input stops while the menu is active and resumes when it deactivates, with gamepad focus handled for free."
+              ],
+              acceptance: ["Opening/closing the menu cleanly swaps input between game and UI without manual SetInputMode juggling."],
+              hints: ["CommonUI's value is the activatable stack + input routing — resist mixing it with raw AddToViewport menus."]
             }
           ]
         }
@@ -1019,7 +1406,7 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Editor Utility Widgets", url: "https://dev.epicgames.com/documentation/unreal-engine/editor-utility-widgets-in-unreal-engine", type: "doc" },
-            { title: "Details panel customization", url: "https://dev.epicgames.com/documentation/unreal-engine/details-panel-customization-in-unreal-engine", type: "doc" }
+            { title: "Details panel customization", url: "https://dev.epicgames.com/documentation/unreal-engine/details-panel-customizations-in-unreal-engine", type: "doc" }
           ],
           exercises: [
             {
@@ -1066,6 +1453,39 @@ window.CURRICULUM = {
               hints: ["Override Main(const FString& Params) and return 0 on success."]
             }
           ]
+        },
+        {
+          id: "s6-m4",
+          title: "Automation testing",
+          objectives: [
+            "Write unit-style tests with IMPLEMENT_SIMPLE_AUTOMATION_TEST and BDD-style specs with DEFINE_SPEC.",
+            "Build map-based functional tests for gameplay-level behavior.",
+            "Run tests from the Session Frontend and headlessly from the command line (CI-ready)."
+          ],
+          resources: [
+            { title: "Automation Test Framework", url: "https://dev.epicgames.com/documentation/unreal-engine/automation-test-framework-in-unreal-engine", type: "doc" },
+            { title: "Automation spec (BDD-style tests)", url: "https://dev.epicgames.com/documentation/unreal-engine/automation-spec-in-unreal-engine", type: "doc" },
+            { title: "Functional testing (map-based)", url: "https://dev.epicgames.com/documentation/unreal-engine/functional-testing-in-unreal-engine", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s6-m4-e1",
+              title: "Unit-test a function library",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Put a safety net under code you actually wrote.",
+              steps: [
+                "Write IMPLEMENT_SIMPLE_AUTOMATION_TEST cases for your Stage 3 math/util function library, including edge cases that once surprised you.",
+                "Run them filtered in Window > Test Automation (Session Frontend) and make one fail to see the report.",
+                "Run the same tests headless: UnrealEditor-Cmd.exe <Project> -ExecCmds=\"Automation RunTests <YourPrefix>\" -unattended -nopause."
+              ],
+              acceptance: [
+                "Tests pass in the Session Frontend and from the command line with a parseable result.",
+                "A deliberately broken implementation is caught by at least one test."
+              ],
+              hints: ["Pick the right flags: EAutomationTestFlags::EditorContext | SmokeFilter runs fast and everywhere; keep slow tests out of the smoke set."]
+            }
+          ]
         }
       ]
     },
@@ -1089,7 +1509,7 @@ window.CURRICULUM = {
             "Understand (carefully) how to make a local engine modification."
           ],
           resources: [
-            { title: "Downloading Unreal Engine Source Code", url: "https://dev.epicgames.com/documentation/unreal-engine/downloading-unreal-engine-source-code", type: "doc" },
+            { title: "Downloading Unreal Engine Source Code", url: "https://dev.epicgames.com/documentation/unreal-engine/downloading-source-code-in-unreal-engine", type: "doc" },
             { title: "Building Unreal Engine from Source", url: "https://dev.epicgames.com/documentation/unreal-engine/building-unreal-engine-from-source", type: "doc" },
             { title: "Unreal Engine on GitHub (request access)", url: "https://www.unrealengine.com/ue-on-github", type: "repo" }
           ],
@@ -1120,7 +1540,8 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Networking overview (server authority, relevancy)", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-and-multiplayer-in-unreal-engine", type: "doc" },
-            { title: "Networking overview (authority, relevancy, optimization)", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-overview-for-unreal-engine", type: "doc" }
+            { title: "Networking overview (authority, relevancy, optimization)", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-overview-for-unreal-engine", type: "doc" },
+            { title: "Introduction to Iris (5.x replication system)", url: "https://dev.epicgames.com/documentation/unreal-engine/introduction-to-iris-in-unreal-engine", type: "doc" }
           ],
           exercises: [
             {
@@ -1136,6 +1557,20 @@ window.CURRICULUM = {
               ],
               acceptance: ["The property still replicates correctly with measurably less overhead."],
               hints: ["Enable push model for the class with the appropriate net flags before relying on dirty marking."]
+            },
+            {
+              id: "s7-m2-e2",
+              title: "Challenge: tune relevancy & update frequency",
+              kind: "challenge",
+              difficulty: "hard",
+              goal: "Spend bandwidth where players can perceive it.",
+              steps: [
+                "Spawn a few dozen replicated actors and record a baseline with 'stat net' and the network profiler.",
+                "Lower NetUpdateFrequency on slow-changing actors and tighten NetCullDistanceSquared on cosmetic ones.",
+                "Re-measure and note which changes a second player can actually perceive in PIE."
+              ],
+              acceptance: ["Measurably fewer replicated bits per second with no perceivable gameplay difference for clients."],
+              hints: ["Relevancy culls whole actors per-connection; update frequency throttles how often relevant ones are considered — they attack different costs."]
             }
           ]
         },
@@ -1148,7 +1583,7 @@ window.CURRICULUM = {
             "Read a crash dump / callstack and symbolicate it."
           ],
           resources: [
-            { title: "Packaging Unreal Engine Projects", url: "https://dev.epicgames.com/documentation/unreal-engine/packaging-unreal-engine-projects", type: "doc" },
+            { title: "Packaging Unreal Engine Projects", url: "https://dev.epicgames.com/documentation/unreal-engine/packaging-your-project", type: "doc" },
             { title: "Build configurations", url: "https://dev.epicgames.com/documentation/unreal-engine/build-configurations-reference-for-unreal-engine", type: "doc" },
             { title: "Testing & optimizing your content", url: "https://dev.epicgames.com/documentation/unreal-engine/testing-and-optimizing-your-content", type: "doc" }
           ],
