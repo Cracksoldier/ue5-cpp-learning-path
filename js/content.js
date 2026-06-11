@@ -125,6 +125,83 @@ window.CURRICULUM = {
           ]
         },
         {
+          /* Inserted between m2 and m3 by design: display order is array order,
+           * and ids must stay stable, so the id is non-sequential on purpose. */
+          id: "s0-m4",
+          title: "Set up UE on Linux",
+          objectives: [
+            "Install Unreal Engine on a Linux workstation: there is no Epic Games Launcher on Linux, so you either download an official binary release or build the engine from GitHub source.",
+            "Know the Linux prerequisites: a Vulkan-capable GPU and recent drivers (Linux renders through Vulkan only), Epic's bundled clang toolchain, and the bundled .NET runtime that UnrealBuildTool runs on.",
+            "Generate project files and build from the terminal, and set up VS Code or Rider as your IDE.",
+            "Respect the gotcha that bites every Windows-trained developer first: the filesystem is case-sensitive."
+          ],
+          resources: [
+            { title: "Linux Development Quickstart for Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/linux-development-quickstart-for-unreal-engine", type: "doc" },
+            { title: "Linux Development Requirements for Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/linux-development-requirements-for-unreal-engine", type: "doc" },
+            { title: "Unreal Engine for Linux — binary releases (Epic sign-in required)", url: "https://www.unrealengine.com/en-US/linux", type: "doc" },
+            { title: "Setting Up Visual Studio Code for Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/setting-up-visual-studio-code-for-unreal-engine", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s0-m4-e1",
+              title: "Install the engine and launch the editor",
+              kind: "exercise",
+              difficulty: "easy",
+              goal: "Get a working Unreal Editor on Linux without a launcher to hold your hand.",
+              steps: [
+                "Confirm your GPU does Vulkan: run vulkaninfo --summary (or vkcube) and check a real device is listed — Linux has no D3D fallback.",
+                "Sign in on the Unreal Engine for Linux page, download the 5.7/5.8 binary release .zip and unzip it somewhere you own (e.g. ~/UnrealEngine).",
+                "Launch Engine/Binaries/Linux/UnrealEditor from the terminal and create a Games > Third Person project with C++ selected."
+              ],
+              acceptance: [
+                "The editor launches, the C++ project compiles and you can move the character in PIE.",
+                "You can explain where the engine lives on disk and why there was no launcher involved."
+              ],
+              hints: [
+                "A long first startup is normal — the editor is compiling Vulkan shaders; let it finish once and later launches are fast.",
+                "Keep the terminal you launched from open: on Linux the log scrolls right there, which beats hunting for the log file."
+              ]
+            },
+            {
+              id: "s0-m4-e2",
+              title: "Build from the terminal",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Own the terminal build workflow — on Linux the shell scripts ARE the build system, the IDE is just a front-end.",
+              steps: [
+                "From the engine root, run GenerateProjectFiles.sh -project=/absolute/path/To/YourGame.uproject -game -vscode.",
+                "Build the editor target directly: Engine/Build/BatchFiles/Linux/Build.sh YourGameEditor Linux Development -project=/absolute/path/To/YourGame.uproject.",
+                "Open the generated workspace in VS Code (or the .uproject in Rider), then launch the result: Engine/Binaries/Linux/UnrealEditor /absolute/path/To/YourGame.uproject."
+              ],
+              acceptance: [
+                "The project builds from the terminal with no IDE involved and the editor opens it afterwards.",
+                "You can name the three arguments every Build.sh invocation needs: target, platform, configuration."
+              ],
+              hints: [
+                "Build.sh and GenerateProjectFiles.sh want absolute -project paths — relative paths are the most common first failure.",
+                "UnrealBuildTool itself runs on the .NET runtime Epic bundles under Engine/Binaries/ThirdParty/DotNet, and compiles with Epic's bundled clang — you install neither yourself."
+              ]
+            },
+            {
+              id: "s0-m4-e3",
+              title: "Challenge: the case-sensitivity trap",
+              kind: "challenge",
+              difficulty: "medium",
+              goal: "Experience the classic cross-platform break: code that builds on Windows but not on Linux.",
+              steps: [
+                "In one of your .cpp files, change an #include to the wrong case (e.g. #include \"yourgamecharacter.h\" instead of \"YourGameCharacter.h\") — on a Windows checkout this compiles fine.",
+                "Build from the terminal with Build.sh and read clang's 'file not found' error.",
+                "Fix it, then sweep your project for other case-sensitive landmines: file paths in config files and any hardcoded asset paths in code."
+              ],
+              acceptance: [
+                "You can explain why the bad include builds on Windows (NTFS is case-insensitive) but fails on Linux.",
+                "The project builds cleanly again and you adopted the rule: include paths match filenames character for character."
+              ],
+              hints: ["clang says 'file not found' where MSVC said nothing — when porting Windows-grown code to Linux, headers with mismatched case are suspect number one."]
+            }
+          ]
+        },
+        {
           id: "s0-m3",
           title: "The build pipeline & Live Coding",
           objectives: [
@@ -673,7 +750,8 @@ window.CURRICULUM = {
             { title: "Asserts (check / ensure / verify)", url: "https://dev.epicgames.com/documentation/unreal-engine/asserts-in-unreal-engine", type: "doc" },
             { title: "Console variables in C++", url: "https://dev.epicgames.com/documentation/unreal-engine/console-variables-cplusplus-in-unreal-engine", type: "doc" },
             { title: "Visual Logger", url: "https://dev.epicgames.com/documentation/unreal-engine/visual-logger-in-unreal-engine", type: "doc" },
-            { title: "Gameplay Debugger", url: "https://dev.epicgames.com/documentation/unreal-engine/using-the-gameplay-debugger-in-unreal-engine", type: "doc" }
+            { title: "Gameplay Debugger", url: "https://dev.epicgames.com/documentation/unreal-engine/using-the-gameplay-debugger-in-unreal-engine", type: "doc" },
+            { title: "GDB to LLDB command map (lldb.llvm.org)", url: "https://lldb.llvm.org/use/map.html", type: "doc" }
           ],
           exercises: [
             {
@@ -706,6 +784,26 @@ window.CURRICULUM = {
               ],
               acceptance: ["Debug drawing switches on and off at runtime with no recompile."],
               hints: ["Console variables are found by prefix in the console — pick a consistent 'MyGame.' namespace now and keep it."]
+            },
+            {
+              id: "s2-m6-e3",
+              title: "Debug the engine under LLDB (Linux)",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Be as much at home in LLDB on Linux as in the Visual Studio debugger on Windows.",
+              steps: [
+                "Wire up Epic's pretty-printers: add command script import \"<EngineRoot>/Engine/Extras/LLDBDataFormatters/UEDataFormatters_2ByteChars.py\" to your ~/.lldbinit.",
+                "Launch the editor under the debugger: lldb -- Engine/Binaries/Linux/UnrealEditor /absolute/path/To/YourGame.uproject (or attach to a running one with lldb -p <pid>).",
+                "Set a breakpoint with b AYourCharacter::BeginPlay, run, and when it hits inspect members with frame variable — look at an FString and a TArray."
+              ],
+              acceptance: [
+                "The breakpoint hits and frame variable shows the FString's actual text and the TArray's elements, not raw pointers.",
+                "You can both launch under LLDB and attach to an already-running editor."
+              ],
+              hints: [
+                "If FString shows only an opaque Data pointer, your .lldbinit didn't load — the formatters ship with the engine under Engine/Extras/LLDBDataFormatters.",
+                "Coming from Visual Studio? Keep the GDB-to-LLDB command map open; any unique short form works (br se, fr v)."
+              ]
             }
           ]
         }
@@ -1585,7 +1683,8 @@ window.CURRICULUM = {
           resources: [
             { title: "Packaging Unreal Engine Projects", url: "https://dev.epicgames.com/documentation/unreal-engine/packaging-your-project", type: "doc" },
             { title: "Build configurations", url: "https://dev.epicgames.com/documentation/unreal-engine/build-configurations-reference-for-unreal-engine", type: "doc" },
-            { title: "Testing & optimizing your content", url: "https://dev.epicgames.com/documentation/unreal-engine/testing-and-optimizing-your-content", type: "doc" }
+            { title: "Testing & optimizing your content", url: "https://dev.epicgames.com/documentation/unreal-engine/testing-and-optimizing-your-content", type: "doc" },
+            { title: "Setting Up Dedicated Servers in Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/setting-up-dedicated-servers-in-unreal-engine", type: "doc" }
           ],
           exercises: [
             {
@@ -1601,6 +1700,43 @@ window.CURRICULUM = {
               ],
               acceptance: ["A Shipping build of your game runs outside the editor."],
               hints: ["Editor-only code must be guarded by WITH_EDITOR or it won't exist in Shipping."]
+            },
+            {
+              id: "s7-m3-e2",
+              title: "Package a Linux Shipping build",
+              kind: "exercise",
+              difficulty: "hard",
+              goal: "Ship for Linux the way a build farm would: from the terminal, in Shipping, run from a bare prompt.",
+              steps: [
+                "Package from the command line: Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=/abs/path/YourGame.uproject -platform=Linux -clientconfig=Shipping -build -cook -stage -pak -package.",
+                "Run the staged build's launch script (or the binary under YourGame/Binaries/Linux/) from a terminal on a Vulkan-capable machine.",
+                "Find where a packaged Linux game writes its Saved data and logs (~/.config/Epic/<Project>/) and confirm what Shipping did to logging."
+              ],
+              acceptance: [
+                "The Shipping build runs standalone on Linux outside the editor.",
+                "You can say where Saved/ lives for a packaged Linux build and why the log is empty in Shipping by default."
+              ],
+              hints: ["Shipping compiles logging out unless you set bUseLoggingInShipping in the target rules — verify behavior in Development first, then flip to Shipping."]
+            },
+            {
+              id: "s7-m3-e3",
+              title: "Challenge: a Linux dedicated server",
+              kind: "challenge",
+              difficulty: "hard",
+              goal: "Run your game the way live multiplayer games actually run: a headless Linux server with real clients connecting.",
+              steps: [
+                "With your source-built engine (see 'Building & extending engine source' above — installed builds cannot build Server targets), add a YourGameServer.Target.cs with Type = TargetType.Server.",
+                "Build and package it: RunUAT.sh BuildCookRun -project=... -platform=Linux -serverplatform=Linux -server -serverconfig=Development -build -cook -stage -pak.",
+                "Start it headless with ./YourGameServer -log, then from a client build (or PIE on another machine) connect with open <server-ip>:7777 and watch the server log the join."
+              ],
+              acceptance: [
+                "The server runs without rendering, logs the client connection, and the client plays with replicated state.",
+                "You can explain why the Server target needs a source-built engine."
+              ],
+              hints: [
+                "No connection? It's almost always the network path: UDP port 7777 open, server bound on the right interface, client using the server's reachable IP.",
+                "A dedicated server has no cooked client content — cook for both server and client platforms or the client will fail to load the map."
+              ]
             }
           ]
         },
