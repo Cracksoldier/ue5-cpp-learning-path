@@ -66,7 +66,7 @@
         return el("li", { class: "module-chip", text: mod.title });
       }));
 
-      var card = el("a", { class: "topic-card", href: "app.html" }, [
+      var card = el("a", { class: "topic-card", href: "app.html#" + stage.id }, [
         el("div", { class: "topic-card-head" }, [
           el("span", { class: "stage-index", text: "Stage " + idx }),
           el("span", { class: "level-badge level-" + slug(stage.level), text: stage.level })

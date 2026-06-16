@@ -451,6 +451,22 @@
     });
   }
 
+  // Deep-link from the landing page: app.html#<stageId> collapses everything
+  // and opens just that stage, then scrolls to it. The id is validated against
+  // the curriculum before it touches a selector, so an arbitrary hash can't
+  // inject one.
+  function applyHash() {
+    var id = (window.location.hash || "").replace(/^#/, "");
+    if (!id || !DATA.stages.some(function (s) { return s.id === id; })) return;
+    expandAll(false);
+    var target = contentRoot.querySelector('.stage[data-stage-id="' + id + '"]');
+    if (!target) return;
+    target.classList.add("open");
+    var header = target.querySelector(".stage-header");
+    if (header) header.setAttribute("aria-expanded", "true");
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   /* -------------------------------------------------------------------------
    * Boot
    * ---------------------------------------------------------------------- */
@@ -471,6 +487,7 @@
 
     loadState();
     render();
+    applyHash(); // honor app.html#<stageId> from the landing page's topic cards
 
     // Toolbar wiring
     document.getElementById("btn-export").addEventListener("click", exportProgress);
@@ -495,6 +512,9 @@
       loadState();
       render();
     });
+
+    // Allow in-app navigation to a stage via the hash (e.g. back/forward).
+    window.addEventListener("hashchange", applyHash);
   }
 
   if (document.readyState === "loading") {

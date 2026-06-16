@@ -125,8 +125,53 @@ window.CURRICULUM = {
           ]
         },
         {
-          /* Inserted between m2 and m3 by design: display order is array order,
-           * and ids must stay stable, so the id is non-sequential on purpose. */
+          id: "s0-m3",
+          title: "The build pipeline & Live Coding",
+          objectives: [
+            "Understand UnrealBuildTool (UBT) and UnrealHeaderTool (UHT) at a high level.",
+            "Use Live Coding / Hot Reload to iterate on C++ without a full editor restart.",
+            "Know when a change requires a full rebuild vs. a Live Coding patch."
+          ],
+          resources: [
+            { title: "Live Coding for Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/using-live-coding-to-recompile-unreal-engine-applications-at-runtime", type: "doc" },
+            { title: "Unreal Build Tool overview", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-build-tool-in-unreal-engine", type: "doc" },
+            { title: "Unreal Header Tool & reflection", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-header-tool-for-unreal-engine", type: "doc" }
+          ],
+          exercises: [
+            {
+              id: "s0-m3-e1",
+              title: "Iterate with Live Coding",
+              kind: "exercise",
+              difficulty: "medium",
+              goal: "Build the fast edit-compile-test loop you'll use for the rest of the path.",
+              steps: [
+                "With the editor open, add a UE_LOG line to your Character's BeginPlay.",
+                "Trigger Live Coding (Ctrl+Alt+F11 by default) instead of closing the editor.",
+                "Play and confirm the log appears in the Output Log."
+              ],
+              acceptance: ["You changed C++ behavior without restarting the editor."],
+              hints: ["Adding new UPROPERTY/UFUNCTION reflected members sometimes needs a full restart — note when Live Coding refuses a patch."]
+            },
+            {
+              id: "s0-m3-e2",
+              title: "Challenge: read a build failure",
+              kind: "challenge",
+              difficulty: "medium",
+              goal: "Build the habit of reading UBT/UHT output rather than guessing.",
+              steps: [
+                "Introduce a UHT error on purpose (e.g. put #include \"X.generated.h\" not-last in a header).",
+                "Compile and read the UnrealHeaderTool error.",
+                "Fix it, then break the build a second way (a missing module in .Build.cs) and read that error too."
+              ],
+              acceptance: ["You can distinguish a UHT (reflection) error from a normal compiler/linker error from the message alone."],
+              hints: ["UHT errors mention reflection/generated code; linker errors mention unresolved symbols."]
+            }
+          ]
+        },
+        {
+          /* Linux setup comes last in Stage 0 by design: it builds on the UBT/UHT
+           * and build-pipeline concepts from the module above. The id is
+           * non-sequential (s0-m4 after s0-m3) but stable, so progress is kept. */
           id: "s0-m4",
           title: "Set up UE on Linux",
           objectives: [
@@ -198,50 +243,6 @@ window.CURRICULUM = {
                 "The project builds cleanly again and you adopted the rule: include paths match filenames character for character."
               ],
               hints: ["clang says 'file not found' where MSVC said nothing — when porting Windows-grown code to Linux, headers with mismatched case are suspect number one."]
-            }
-          ]
-        },
-        {
-          id: "s0-m3",
-          title: "The build pipeline & Live Coding",
-          objectives: [
-            "Understand UnrealBuildTool (UBT) and UnrealHeaderTool (UHT) at a high level.",
-            "Use Live Coding / Hot Reload to iterate on C++ without a full editor restart.",
-            "Know when a change requires a full rebuild vs. a Live Coding patch."
-          ],
-          resources: [
-            { title: "Live Coding for Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/using-live-coding-to-recompile-unreal-engine-applications-at-runtime", type: "doc" },
-            { title: "Unreal Build Tool overview", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-build-tool-in-unreal-engine", type: "doc" },
-            { title: "Unreal Header Tool & reflection", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-header-tool-for-unreal-engine", type: "doc" }
-          ],
-          exercises: [
-            {
-              id: "s0-m3-e1",
-              title: "Iterate with Live Coding",
-              kind: "exercise",
-              difficulty: "medium",
-              goal: "Build the fast edit-compile-test loop you'll use for the rest of the path.",
-              steps: [
-                "With the editor open, add a UE_LOG line to your Character's BeginPlay.",
-                "Trigger Live Coding (Ctrl+Alt+F11 by default) instead of closing the editor.",
-                "Play and confirm the log appears in the Output Log."
-              ],
-              acceptance: ["You changed C++ behavior without restarting the editor."],
-              hints: ["Adding new UPROPERTY/UFUNCTION reflected members sometimes needs a full restart — note when Live Coding refuses a patch."]
-            },
-            {
-              id: "s0-m3-e2",
-              title: "Challenge: read a build failure",
-              kind: "challenge",
-              difficulty: "medium",
-              goal: "Build the habit of reading UBT/UHT output rather than guessing.",
-              steps: [
-                "Introduce a UHT error on purpose (e.g. put #include \"X.generated.h\" not-last in a header).",
-                "Compile and read the UnrealHeaderTool error.",
-                "Fix it, then break the build a second way (a missing module in .Build.cs) and read that error too."
-              ],
-              acceptance: ["You can distinguish a UHT (reflection) error from a normal compiler/linker error from the message alone."],
-              hints: ["UHT errors mention reflection/generated code; linker errors mention unresolved symbols."]
             }
           ]
         }
@@ -552,7 +553,7 @@ window.CURRICULUM = {
           resources: [
             { title: "Pawn & Character", url: "https://dev.epicgames.com/documentation/unreal-engine/pawn-in-unreal-engine", type: "doc" },
             { title: "Player Controllers", url: "https://dev.epicgames.com/documentation/unreal-engine/player-controllers-in-unreal-engine", type: "doc" },
-            { title: "Tom Looman — free 'Unreal Engine C++' course materials", url: "https://courses.tomlooman.com/p/unrealengine-cpp", type: "video" }
+            { title: "Tom Looman — free 'Unreal Engine C++' course materials", url: "https://courses.tomlooman.com/p/unrealengine-cpp", type: "doc" }
           ],
           exercises: [
             {
