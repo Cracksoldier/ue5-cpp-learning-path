@@ -68,7 +68,7 @@
       console.warn("Could not save progress (storage unavailable):", e);
       if (!storageWarned) {
         storageWarned = true;
-        flash("Progress can't be saved in this browser — use Export to back it up.", "err");
+        flash("Progress can't be saved in this browser — use Save to back it up.", "err");
       }
     }
   }
@@ -354,7 +354,7 @@
   }
 
   /* -------------------------------------------------------------------------
-   * Import / Export / Reset
+   * Load / Save / Reset
    * ---------------------------------------------------------------------- */
   function exportProgress() {
     var payload = {
@@ -372,7 +372,7 @@
     document.body.removeChild(a);
     // Revoke after a tick so the download has started.
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-    flash("Progress exported.", "ok");
+    flash("Progress saved.", "ok");
   }
 
   function importProgressFromFile(file) {
@@ -384,11 +384,11 @@
         if (!clean) {
           throw new Error("Missing or invalid 'completed' map.");
         }
-        // Import replaces (not merges) — confirm like Reset does, but only
+        // Load replaces (not merges) — confirm like Reset does, but only
         // after validation so a broken file still fails with a clear error.
         var current = Object.keys(state.completed).length;
-        if (current > 0 && !window.confirm("Importing replaces your current progress (" + current + " completed items). Continue? Export first if you want a backup.")) {
-          flash("Import cancelled — progress unchanged.", "ok");
+        if (current > 0 && !window.confirm("Loading replaces your current progress (" + current + " completed items). Continue? Save first if you want a backup.")) {
+          flash("Load cancelled — progress unchanged.", "ok");
           return;
         }
         state.completed = clean;
@@ -401,9 +401,9 @@
         var keys = Object.keys(clean);
         var matched = keys.filter(function (k) { return validIds[k] === true; }).length;
         var unknown = keys.length - matched;
-        flash("Progress imported (" + matched + " items" + (unknown ? ", " + unknown + " unknown ids ignored" : "") + ").", unknown ? "warn" : "ok");
+        flash("Progress loaded (" + matched + " items" + (unknown ? ", " + unknown + " unknown ids ignored" : "") + ").", unknown ? "warn" : "ok");
       } catch (e) {
-        flash("Import failed: " + e.message, "err");
+        flash("Load failed: " + e.message, "err");
       }
     };
     reader.onerror = function () { flash("Could not read the file.", "err"); };
@@ -413,7 +413,7 @@
   function resetProgress() {
     var count = Object.keys(state.completed).length;
     if (count === 0) { flash("Nothing to reset.", "ok"); return; }
-    if (!window.confirm("Reset all progress? This clears " + count + " completed items. Export first if you want a backup.")) {
+    if (!window.confirm("Reset all progress? This clears " + count + " completed items. Save first if you want a backup.")) {
       return;
     }
     state.completed = {};
