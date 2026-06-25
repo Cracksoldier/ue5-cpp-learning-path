@@ -285,7 +285,10 @@
 
     var card = el("div", { class: "exercise" + (check.checked ? " completed" : "") });
 
-    var titleRow = el("label", { class: "ex-title-row", "for": ex.id }, [
+    // The checkbox is nested inside this label, so no `for` is needed (and a
+    // `for` pointing at a wrapped control is redundant). The sibling study-row
+    // label below uses `for` instead because it does NOT wrap its checkbox.
+    var titleRow = el("label", { class: "ex-title-row" }, [
       check,
       el("span", { class: "ex-title", text: ex.title }),
       kindBadge,
@@ -436,10 +439,12 @@
    * ---------------------------------------------------------------------- */
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
 
+  // UTC so the filename's date matches the UTC `exportedAt` timestamp inside
+  // the file (otherwise they can name different days near midnight).
   function dateStamp() {
     var d = new Date();
     function p(n) { return (n < 10 ? "0" : "") + n; }
-    return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate());
+    return d.getUTCFullYear() + p(d.getUTCMonth() + 1) + p(d.getUTCDate());
   }
 
   function expandAll(open) {
