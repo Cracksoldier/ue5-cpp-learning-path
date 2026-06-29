@@ -88,7 +88,8 @@ window.CURRICULUM = {
             { title: "Setting Up Visual Studio for Unreal Engine", url: "https://dev.epicgames.com/documentation/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine", type: "doc" },
             { title: "Unreal Engine 5.7 Documentation (home)", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-5-7-documentation", type: "doc" },
             { title: "Unreal Engine 5.7 Release Notes (toolchain: MSVC 14.44)", url: "https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-5-7-release-notes", type: "doc" },
-            { title: "JetBrains Rider for Unreal Engine", url: "https://www.jetbrains.com/lp/rider-unreal/", type: "doc" }
+            { title: "JetBrains Rider for Unreal Engine", url: "https://www.jetbrains.com/lp/rider-unreal/", type: "doc" },
+            { title: "Epic — Your First Game in Unreal Engine 5", url: "https://dev.epicgames.com/community/learning/tutorials/e2V/your-first-game-in-unreal-engine-5", type: "video" }
           ],
           exercises: [
             {
@@ -613,7 +614,8 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Game Mode and Game State", url: "https://dev.epicgames.com/documentation/unreal-engine/game-mode-and-game-state-in-unreal-engine", type: "doc" },
-            { title: "Gameplay Framework quick reference", url: "https://dev.epicgames.com/documentation/unreal-engine/gameplay-framework-in-unreal-engine", type: "doc" }
+            { title: "Gameplay Framework quick reference", url: "https://dev.epicgames.com/documentation/unreal-engine/gameplay-framework-in-unreal-engine", type: "doc" },
+            { title: "Alex Forsythe — The UE Game Framework: int main() → BeginPlay", url: "https://www.youtube.com/watch?v=IaU2Hue-ApI", type: "video" }
           ],
           exercises: [
             {
@@ -831,7 +833,8 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Blueprint/C++ — exposing gameplay elements", url: "https://dev.epicgames.com/documentation/unreal-engine/exposing-gameplay-elements-to-blueprints-visual-scripting-in-unreal-engine", type: "doc" },
-            { title: "Blueprints and C++ — how they work together", url: "https://dev.epicgames.com/documentation/unreal-engine/blueprints-visual-scripting-in-unreal-engine", type: "doc" }
+            { title: "Blueprints and C++ — how they work together", url: "https://dev.epicgames.com/documentation/unreal-engine/blueprints-visual-scripting-in-unreal-engine", type: "doc" },
+            { title: "Alex Forsythe — Blueprints vs. C++: How They Fit Together", url: "https://www.youtube.com/watch?v=VMZftEVDuCE", type: "video" }
           ],
           exercises: [
             {
@@ -961,7 +964,8 @@ window.CURRICULUM = {
           resources: [
             { title: "Gameplay Ability System overview", url: "https://dev.epicgames.com/documentation/unreal-engine/gameplay-ability-system-for-unreal-engine", type: "doc" },
             { title: "Gameplay Tags", url: "https://dev.epicgames.com/documentation/unreal-engine/using-gameplay-tags-in-unreal-engine", type: "doc" },
-            { title: "tranek/GASDocumentation (community deep-dive)", url: "https://github.com/tranek/GASDocumentation", type: "repo" }
+            { title: "tranek/GASDocumentation (community deep-dive)", url: "https://github.com/tranek/GASDocumentation", type: "repo" },
+            { title: "Epic — Your First 60 Minutes with Gameplay Ability System", url: "https://dev.epicgames.com/community/learning/tutorials/8Xn9/unreal-engine-epic-for-indies-your-first-60-minutes-with-gameplay-ability-system", type: "video" }
           ],
           exercises: [
             {
@@ -1005,7 +1009,8 @@ window.CURRICULUM = {
           resources: [
             { title: "Networking and Multiplayer overview", url: "https://dev.epicgames.com/documentation/unreal-engine/networking-and-multiplayer-in-unreal-engine", type: "doc" },
             { title: "Property replication", url: "https://dev.epicgames.com/documentation/unreal-engine/replicate-actor-properties-in-unreal-engine", type: "doc" },
-            { title: "RPCs (Remote Procedure Calls)", url: "https://dev.epicgames.com/documentation/unreal-engine/remote-procedure-calls-in-unreal-engine", type: "doc" }
+            { title: "RPCs (Remote Procedure Calls)", url: "https://dev.epicgames.com/documentation/unreal-engine/remote-procedure-calls-in-unreal-engine", type: "doc" },
+            { title: "Alex Forsythe — Multiplayer in UE: How to Understand Network Replication", url: "https://www.youtube.com/watch?v=JOJP0CvpB8w", type: "video" }
           ],
           exercises: [
             {
@@ -1751,7 +1756,9 @@ window.CURRICULUM = {
           ],
           resources: [
             { title: "Epic Developer Community — getting started hub", url: "https://dev.epicgames.com/community/unreal-engine/getting-started", type: "doc" },
-            { title: "Sample game projects", url: "https://dev.epicgames.com/documentation/unreal-engine/sample-game-projects-for-unreal-engine", type: "repo" }
+            { title: "Sample game projects", url: "https://dev.epicgames.com/documentation/unreal-engine/sample-game-projects-for-unreal-engine", type: "repo" },
+            { title: "Lyra Sample Game (reference)", url: "https://dev.epicgames.com/documentation/unreal-engine/lyra-sample-game-in-unreal-engine", type: "doc" },
+            { title: "Lyra Starter Game — guided learning path", url: "https://dev.epicgames.com/community/learning/paths/Z4/lyra-starter-game", type: "doc" }
           ],
           exercises: [
             {
